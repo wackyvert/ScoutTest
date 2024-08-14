@@ -1,5 +1,6 @@
 package com.rebelrobotics.scoutingapp;
 
+import com.google.cloud.firestore.Firestore;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -57,6 +58,14 @@ public class HelloController {
     private Label eventName;
     @FXML
     private Label eventDate;
+    public HelloController(){
+        try {
+            Firestore db = FirestoreInitializer.initializeFirestore();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @FXML
     private void initialize() {
         // Set up columns for redTeams TableView
@@ -712,5 +721,6 @@ public class HelloController {
             return opponentScore.get();
         }
     }
+
 
 }
