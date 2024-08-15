@@ -12,10 +12,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -58,13 +61,15 @@ public class HelloController {
     private Label eventName;
     @FXML
     private Label eventDate;
+    @FXML
+    ImageView imageView = new ImageView();
     public HelloController(){
-        try {
-            Firestore db = FirestoreInitializer.initializeFirestore();
+      /*  try {
+           // Firestore db = FirestoreInitializer.initializeFirestore();
 
-        } catch (IOException e) {
+        } catch (/*IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
     @FXML
     private void initialize() {
@@ -122,6 +127,7 @@ public class HelloController {
                 (observable, oldValue, newValue) -> {
                     try {
                         updateMatchDetails(matchDetailTable, newValue);
+
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -145,6 +151,8 @@ public class HelloController {
             return JsonParser.parseString(responseData).getAsJsonObject();
         }
     }
+
+
 
     private void populateMatchListView(ListView<String> listView, String teamNumber) {
         new Thread(() -> {

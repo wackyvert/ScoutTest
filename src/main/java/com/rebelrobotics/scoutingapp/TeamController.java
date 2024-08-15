@@ -6,6 +6,28 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.api.core.ApiFuture;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.text.Text;
+/*rules_version = '2';
+
+
+service firebase.storage {
+
+  match /b/{bucket}/o {
+
+    match /{allPaths=**} {
+
+      allow read, write: if
+
+          request.time < timestamp.date(2024, 9, 14);
+
+    }
+
+  }
+
+}
+*/
 
 import java.util.ArrayList;
 import java.util.List;
