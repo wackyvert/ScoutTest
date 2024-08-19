@@ -55,7 +55,7 @@
                </children>
             </GridPane>
             <Text fx:id="notesLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" onAction="#handleUploadButtonAction" text="Upload image" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false"  text="Upload image" GridPane.rowIndex="2" />
             <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>

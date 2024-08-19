@@ -8,6 +8,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.StorageClient;
 import com.sun.javafx.collections.ElementObservableListDecorator;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -15,11 +16,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.ByteArrayInputStream;
@@ -33,7 +38,7 @@ import java.util.concurrent.ExecutionException;
 
 public class firebaseControllerFX {
     ObservableList<String> teamList;
-    private TeamController teamController;
+    static TeamController teamController;
     @FXML
     private TextField number;
     @FXML
@@ -43,17 +48,26 @@ public class firebaseControllerFX {
     @FXML
     private TextField school;
     @FXML
-    private Label nameLabel;
+    private Text nameLabel;
     @FXML
-    private Label numberLabel;
+    private Text numberLabel;
     @FXML
-    private Label schoolLabel;
+    private Text schoolLabel;
     @FXML
     private Text notesLabel;
     @FXML
     public void makeTeam(){
-        teamController.saveTeam(new Team(name.getText(), Integer.parseInt(number.getText()), school.getText(), notes.getText()));
-
+      //  teamController.saveTeam(new Team(name.getText(), Integer.parseInt(number.getText()), school.getText(), notes.getText()));
+        try {
+            Stage newTeamStage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("newTeam.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 581, 309);
+            newTeamStage.setTitle("New Team");
+            newTeamStage.setScene(scene);
+            newTeamStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     Firestore db;
     public firebaseControllerFX(){
@@ -76,30 +90,24 @@ public class firebaseControllerFX {
     private ObservableList<Team> teamObservableList = FXCollections.observableArrayList();
     @FXML
     ImageView imageView;
-    private byte[] downloadImageFromFirebase() throws IOException {
-        FileInputStream serviceAccount = new FileInputStream("C:\\Users\\jtorgerson\\Downloads\\scout-8125e-c65d86f209dc.json");
+    private byte[] downloadImageFromFirebase(String imageName) throws IOException {
 
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .setStorageBucket("scout-8125e.appspot.com")
-                .build();
 
-        FirebaseApp.initializeApp(options);
 
         // Get the bucket
-        Storage storage = StorageOptions.getDefaultInstance().getService();
-        Bucket bucket = storage.get("testing-6a1fc.appspot.com");
 
+        Bucket bucket = StorageClient.getInstance().bucket();
+        System.out.println(imageName);
         // Download the image
-        Blob blob = bucket.get("Screenshot 2024-04-09 102545.png"); // Replace with your image name
+        Blob blob = bucket.get(imageName); // Replace with your image name
         return blob.getContent();
     }
-    private void setImageView() throws IOException {
-        imageView.setFitWidth(300); // Adjust width as needed
+    private void setImageView(String teamName) throws IOException {
+        imageView.setFitWidth(640); // Adjust width as needed
         imageView.setPreserveRatio(true);
 
         // Download image from Firebase Storage
-        byte[] imageData = downloadImageFromFirebase();
+        byte[] imageData = downloadImageFromFirebase(teamName+".JPG");
 
         if (imageData != null) {
             // Convert byte array to InputStream
@@ -145,6 +153,14 @@ public class firebaseControllerFX {
                     schoolLabel.setText(newValue.getSchool());
                     notesLabel.setText(newValue.getNotes());
                     numberLabel.setText(String.valueOf(newValue.getNumber()));
+                    try {
+                        System.out.println(newValue.getNumber());
+                        setImageView(String.valueOf(newValue.getNumber()));
+                    } catch (IOException | NullPointerException e) {
+                        imageView.setImage(null);
+                        throw new RuntimeException(e);
+
+                    }
                 }
             }
         });
@@ -154,23 +170,9 @@ public class firebaseControllerFX {
             e.printStackTrace();
         }
 
-        //setImageView();
-    }
-    public void handleUploadButtonAction() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Image to Upload");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
 
-        File selectedFile = fileChooser.showOpenDialog(null);
-
-        if (selectedFile != null) {
-            try {
-                ImageUploader.uploadImage(selectedFile.getAbsolutePath(), selectedFile.getName());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
+
     private void loadTeams() throws InterruptedException, ExecutionException {
         List<Team> teams = teamController.getAllTeams();
         // Add each team name to the observable list

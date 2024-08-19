@@ -16,7 +16,7 @@ public class ImageUploader {
         Storage storage = StorageOptions.getDefaultInstance().getService();
         Bucket bucket = StorageClient.getInstance().bucket();
         Path localImagePath = Paths.get(localFilePath);
-        BlobInfo blobInfo = BlobInfo.newBuilder("testing-6a1fc.appspot.com", String.valueOf(Paths.get(localFilePath).getFileName()))
+        BlobInfo blobInfo = BlobInfo.newBuilder("testing-6a1fc.appspot.com", destinationFileName)
                 .setContentType(Files.probeContentType(localImagePath))
                 .build();
 

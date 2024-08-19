@@ -13,7 +13,7 @@ import java.io.IOException;
 public class FirestoreInitializer {
     public static Firestore initializeFirestore() throws IOException {
         FileInputStream serviceAccount =
-                new FileInputStream("C:\\Users\\jtorgerson\\Downloads\\scout-8125e-c65d86f209dc.json");
+                new FileInputStream("C:\\Users\\Jake\\Downloads\\scout-8125e-c65d86f209dc.json");
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
